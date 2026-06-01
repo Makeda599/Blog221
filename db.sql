@@ -10,3 +10,8 @@ CREATE TABLE utilisateurs (
     role ENUM('lecteur',"auteur"),
     photo VARCHAR(255)
 )
+
+CREATE TABLE categorie (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL
+);

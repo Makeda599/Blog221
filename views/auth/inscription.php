@@ -1,7 +1,6 @@
 <div class="min-h-screen bg-[#EBE5EB] flex items-center justify-center p-4 sm:p-6 lg:p-8">
     <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
 
-        <!-- SECTION GAUCHE : TEXTE & ILLUSTRATION (Identique à Desktop - 2.png) -->
         <div class="md:col-span-7 flex flex-col justify-center space-y-6 text-gray-900">
             <div class="flex items-center gap-2 text-2xl font-bold tracking-tight">
                 <span class="bg-black text-white px-2 py-1 rounded text-lg font-mono">B</span>
@@ -22,23 +21,19 @@
             </div>
         </div>
 
-        <!-- SECTION DROITE : FORMULAIRE AVEC PHOTO DE PROFIL -->
         <div class="md:col-span-5 bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8">
             <div class="text-center mb-4">
                 <h2 class="text-xl font-bold text-gray-900 uppercase tracking-wide">Creez un compte</h2>
                 <p class="text-xs text-gray-400 mt-1">Complétez votre profil pour commencer</p>
             </div>
 
-            <!-- Ajout de enctype="multipart/form-data" pour l'upload d'image -->
             <form method="POST" action="<?= path("auth", "inscription") ?>" enctype="multipart/form-data" class="space-y-3">
 
-                <!-- SÉLECTION DU RÔLE -->
 
                 <!-- <span class="text-red-500 text-xs mb-1 block"><?= $errors["role"] ?? "" ?></span> -->
 
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <?php
-                    // On récupère le rôle soumis ou "lecteur" par défaut
                     $roleActuel = $save["role"] ?? "lecteur";
                     ?>
 
@@ -59,7 +54,6 @@
                     </label>
                 </div>
 
-                <!-- ZONE UPLOAD PHOTO DE PROFIL -->
                 <div class="flex flex-col items-center justify-center pb-2">
                     <span class="text-red-500 text-xs"><?= $errors["photo"] ?? "" ?></span>
 
@@ -80,7 +74,6 @@
                     <p class="text-[10px] text-gray-400 mt-2 italic text-center">Format image (max 2 MB)</p>
                 </div>
 
-                <!-- CHAMPS TEXTE -->
                 <div class="space-y-3">
                     <span class="text-red-500 text-xs"><?= $errors["nom"] ?? "" ?></span>
 
@@ -166,15 +159,12 @@
 <script>
 document.querySelectorAll('.role-label').forEach(label => {
     label.addEventListener('click', function() {
-        // 1. On retire le style rose de tous les labels
         document.querySelectorAll('.role-label').forEach(l => {
             l.classList.remove('border-[#E562D1]', 'bg-pink-50/30');
             l.classList.add('border-gray-200');
-            // Optionnel : remettre l'icône en gris
             l.querySelector('svg').classList.replace('text-[#E562D1]', 'text-gray-400');
         });
 
-        // 2. On ajoute le style rose au label cliqué
         this.classList.remove('border-gray-200');
         this.classList.add('border-[#E562D1]', 'bg-pink-50/30');
         this.querySelector('svg').classList.replace('text-gray-400', 'text-[#E562D1]');

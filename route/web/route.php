@@ -3,6 +3,7 @@
 function routes(){
     return  [
         "auth" => ROOT."controllers/authController.php",
+        "articles" => ROOT."controllers/articleController.php",
     ];
 }
 function gestionController(){

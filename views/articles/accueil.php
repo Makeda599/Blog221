@@ -19,8 +19,8 @@
             <a href="#" class="text-gray-600 hover:text-[#ff00cc] transition">Contact</a>
         </nav>
         <div class="flex space-x-4">
-            <button class="border border-[#ff00cc] text-[#ff00cc] px-5 py-2 rounded-xl text-sm font-semibold hover:bg-pink-50 transition">Se connecter</button>
-            <button class="bg-[#ff00cc] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">S'inscrire</button>
+            <button class="border border-[#ff00cc] text-[#ff00cc] px-5 py-2 rounded-xl text-sm font-semibold hover:bg-pink-50 transition"><a href="<?= path("auth","login") ?>">Se connecter</a></button>
+            <button class="bg-[#ff00cc] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition"><a href="<?= path("auth","inscription") ?>">S'inscrire</a></button>
         </div>
     </header>
 

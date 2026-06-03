@@ -22,6 +22,11 @@ $login = function(){
                     $_SESSION["user"] = $user;
                     // var_dump($_SESSION["user"]);
                     // echo "connexion réussi";
+                    if($_SESSION["user"]["role"] == "auteur"){
+                        redirectTo("auth","auteurDashboard");
+                    }else if($_SESSION["user"]["role"] == "admin"){
+                        redirectTo("auth","adminDashboard");
+                    }
     
                 }else{
                     $errors["mot_de_passe"] = "mot de passe ne corresponde pas";
@@ -89,10 +94,19 @@ $deconnexion =function(){
     deconnexion();
     redirectTo("auth","login");
 };
+$adminDashboard =function(){
+    loadView("dashboard/adminDashboard",[],"admin");
+};
+$auteurDashboard =function(){
+    loadView("dashboard/auteurDashboard",[],"auteur");
+};
 $pages = [
     "login" => $login,
     "inscription" => $inscrip,
     "logOut" => $deconnexion,
+    "adminDashboard" => $adminDashboard,
+    "auteurDashboard" => $auteurDashboard,
+
 ];
 $page = $_REQUEST["page"] ?? "inscription";
 

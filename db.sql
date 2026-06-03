@@ -15,3 +15,35 @@ CREATE TABLE categorie (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE articles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL, 
+    description TEXT NOT NULL,
+    date DATE NOT NULL,
+    statut ENUM('en_attente', 'publie', 'restreinte') DEFAULT 'en_attente', 
+    photo VARCHAR(255),
+    id_categorie INT NOT NULL,
+    id_auteur INT NOT NULL,
+    
+    CONSTRAINT FK_CategorieArticle FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE CASCADE,
+    CONSTRAINT FK_AuteurArticle FOREIGN KEY (id_auteur) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
+
+-- CREATE TABLE commentaires (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     contenu TEXT NOT NULL,
+--     date DATE NOT NULL,
+--     id_article INT NOT NULL, 
+    
+--     CONSTRAINT FK_ArticleCommentaire FOREIGN KEY (id_article) REFERENCES articles(id) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE signalement_articles (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     motif VARCHAR(255) NOT NULL,
+--     date DATE NOT NULL,
+--     id_article INT NOT NULL, -- C'est ici qu'on fait la liaison
+    
+--     CONSTRAINT FK_ArticleSignalement FOREIGN KEY (id_article) REFERENCES articles(id) ON DELETE CASCADE
+-- );

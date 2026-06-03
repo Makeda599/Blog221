@@ -1,7 +1,18 @@
 <div class="max-w-7xl mx-auto px-4 py-8 min-h-screen">
     
-    <div class="mb-6">
-        <a href="?controller=articles&page=articleAuteur" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-pink-500 transition">
+  <div class="mb-6">
+        <?php 
+        $urlRetour = "?controller=articles&page=accueil"; 
+
+        if (isset($_SESSION['user'])) {
+            if ($_SESSION['user']['role'] === 'admin') {
+                $urlRetour = "?controller=articles&page=allArticles"; 
+            } elseif ($_SESSION['user']['role'] === 'auteur') {
+                $urlRetour = "?controller=articles&page=articleAuteur";
+            }
+        }
+        ?>
+        <a href="<?= $urlRetour ?>" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-pink-500 transition">
             <i class="fa-solid fa-arrow-left"></i> Retour aux articles
         </a>
     </div>
@@ -95,90 +106,96 @@
 
     </div>
 
-    <section class="max-w-none lg:w-[65.3%] mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-8">
-        
-        <div class="flex items-center justify-between border-b border-gray-50 pb-4">
-            <h3 class="text-xl font-extrabold text-gray-900">
-                Commentaires <span class="text-gray-400 font-medium ml-1 text-lg">(24)</span>
-            </h3>
-            <select class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-300">
-                <option>les plus pertinents</option>
-                <option>les plus récents</option>
-            </select>
-        </div>
+    <?php if (isset($article['statut']) && $article['statut'] === 'publie'): ?>
+        <section class="max-w-none lg:w-[65.3%] mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-8">
+            
+            <div class="flex items-center justify-between border-b border-gray-50 pb-4">
+                <h3 class="text-xl font-extrabold text-gray-900">
+                    Commentaires <span class="text-gray-400 font-medium ml-1 text-lg">(<?= count($commentaires ?? []) ?>)</span>
+                </h3>
+                <select class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-300">
+                    <option>les plus récents</option>
+                </select>
+            </div>
 
-        <div class="flex gap-4">
-            <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0 hidden sm:block">
-                <?php if (isset($_SESSION['user'])): ?>
-                    <img src="<?=WEBROOT?>/uploads/photos/<?= htmlspecialchars($_SESSION['user']['photo'] ?? 'default.jpg') ?>" alt="Mon Avatar" class="w-full h-full object-cover">
+            <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0 hidden sm:block">
+                    <?php if (isset($_SESSION['user'])): ?>
+                        <img src="<?=WEBROOT?>/uploads/photos/<?= htmlspecialchars($_SESSION['user']['photo'] ?? 'default.jpg') ?>" alt="Mon Avatar" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fa-solid fa-user"></i></div>
+                    <?php endif; ?>
+                </div>
+                
+                <form action="?controller=commentaires&page=ajoutCommentaire" method="POST" class="flex-1 space-y-3">
+                    <input type="hidden" name="article_id" value="<?= $article['id'] ?>">
+                    
+                    <textarea 
+                        name="contenu" 
+                        rows="3" 
+                        placeholder="Ajoutez un commentaire constructif..." 
+                        class="w-full px-4 py-3 bg-gray-50 border <?= isset($errors['contenu']) ? 'border-red-400 focus:ring-red-300' : 'border-gray-200 focus:ring-pink-300' ?> rounded-xl focus:outline-none text-sm placeholder:text-gray-400 resize-none"
+                    ><?= htmlspecialchars($_POST['contenu'] ?? '') ?></textarea>
+                    
+                    <?php if(isset($errors['contenu'])): ?>
+                        <p class="text-xs text-red-500 font-semibold"><?= $errors['contenu'] ?></p>
+                    <?php endif; ?>
+
+                    <div class="flex justify-end">
+                        <button type="submit" name="publier" class="bg-pink-500 text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-pink-600 transition tracking-wide shadow-sm active:scale-95">
+                            publier
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="space-y-6">
+                <?php if (!empty($commentaires)): ?>
+                    <?php foreach ($commentaires as $com): ?>
+                        <div class="space-y-4">
+                            <div class="flex gap-3 items-start bg-gray-50/50 p-4 rounded-xl border border-gray-100/50 justify-between">
+                                <div class="flex gap-3 items-start flex-1">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                                        <img src="<?=WEBROOT?>/uploads/photos/<?= htmlspecialchars($com['photo'] ?? 'default.jpg') ?>" alt="Avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 space-y-1.5">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="text-sm font-bold text-gray-900"><?= htmlspecialchars($com['prenom'] . ' ' . $com['nom']) ?></span>
+                                            
+                                            <?php if ($com['utilisateur_id'] == $article['id_auteur']): ?>
+                                                <span class="bg-pink-100 text-pink-600 font-extrabold text-[9px] px-1.5 py-0.5 rounded">Auteur</span>
+                                            <?php endif; ?>
+                                            
+                                            <span class="text-[10px] text-gray-400">Le <?= date('d M Y à H:i', strtotime($com['date'])) ?></span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 leading-relaxed">
+                                            <?= nl2br(htmlspecialchars($com['contenu'])) ?>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="shrink-0 self-start">
+                                    <a href="?controller=commentaires&page=signalerCommentaire&id=<?= $com['id'] ?>&article_id=<?= $article['id'] ?>" 
+                                       class="text-gray-400 hover:text-red-500 transition text-xs p-1" 
+                                       title="Signaler ce commentaire">
+                                        <i class="fa-solid fa-flag"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fa-solid fa-user"></i></div>
+                    <div class="text-center py-6 text-sm text-gray-400 italic">
+                        Aucun commentaire pour le moment. Soyez le premier à donner votre avis !
+                    </div>
                 <?php endif; ?>
             </div>
-            
-            <form action="?controller=articles&page=ajouterCommentaire" method="POST" class="flex-1 space-y-3">
-                <input type="hidden" name="id_article" value="<?= $article['id'] ?>">
-                <textarea 
-                    name="contenu" 
-                    rows="3" 
-                    placeholder="Ajoutez un commentaire constructif..." 
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 text-sm placeholder:text-gray-400 resize-none"
-                    required
-                ></textarea>
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-pink-500 text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-pink-600 transition tracking-wide shadow-sm active:scale-95">
-                        publier
-                    </button>
-                </div>
-            </form>
+
+        </section>
+    <?php else: ?>
+        <div class="max-w-none lg:w-[65.3%] mt-8 bg-amber-50 border border-amber-200 text-amber-800 p-5 rounded-2xl text-sm flex items-center gap-3 shadow-sm">
+            <span class="text-xl">⚠️</span>
+            <p class="font-medium">L'espace de discussion est fermé. Il sera disponible dès que l'article sera officiellement publié.</p>
         </div>
-
-        <div class="space-y-6">
-            
-            <div class="space-y-4">
-                <div class="flex gap-3 items-start bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
-                    <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
-                        <img src="<?= WEBROOT ?>/uploads/photos/avatar2.jpg" alt="User" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-1 space-y-1.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-gray-900">Aminata UI</span>
-                            <span class="text-[10px] text-gray-400">Il y a 3 heures</span>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            Super résumé ! L'arrivée du Compiler est vraiment ce que j'attends le plus. Avez-vous des informations sur l'impact potentiel sur les temps de build dans des monorepos larges ?
-                        </p>
-                        <div class="flex items-center gap-4 pt-1 text-xs font-semibold text-gray-400">
-                            <button class="hover:text-pink-500 flex items-center gap-1"><i class="fa-regular fa-comment text-[11px]"></i> répondre</button>
-                            <button class="hover:text-pink-500 flex items-center gap-1"><i class="fa-regular fa-heart text-[11px]"></i> 12</button>
-                            <a href="#" class="hover:text-red-500 ml-auto flex items-center gap-1 text-[11px]"><i class="fa-solid fa-flag text-[9px]"></i> signaler</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-3 items-start ml-6 md:ml-12 bg-pink-50/30 p-4 rounded-xl border border-pink-100/20">
-                    <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
-                        <img src="<?= WEBROOT ?>/uploads/photos/<?= htmlspecialchars($article['auteur_photo'] ?? 'default.jpg') ?>" alt="Auteur" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-1 space-y-1.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-gray-900"><?= htmlspecialchars(($article['prenom'] ?? 'Abdou Aziz') . ' ' . ($article['nom'] ?? 'Diouf')) ?></span>
-                            <span class="bg-pink-100 text-pink-600 font-extrabold text-[9px] px-1.5 py-0.5 rounded">Auteur</span>
-                            <span class="text-[10px] text-gray-400">Il y a 2 heures</span>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            Merci Aminata ! D'après les premiers retours de l'équipe Meta, l'impact sur le build est minime car le compiler utilise des heuristiques très optimisées. Le gain de perfs au runtime compense largement.
-                        </p>
-                        <div class="flex items-center gap-4 pt-1 text-xs font-semibold text-gray-400">
-                            <button class="hover:text-pink-500 flex items-center gap-1"><i class="fa-regular fa-comment text-[11px]"></i> répondre</button>
-                            <a href="#" class="hover:text-red-500 ml-auto flex items-center gap-1 text-[11px]"><i class="fa-solid fa-flag text-[9px]"></i> signaler</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </section>
-
+    <?php endif; ?>
 </div>

@@ -29,15 +29,20 @@ CREATE TABLE articles (
     CONSTRAINT FK_CategorieArticle FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE CASCADE,
     CONSTRAINT FK_AuteurArticle FOREIGN KEY (id_auteur) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
+-- 1. Supprime l'ancienne table si elle existe
+-- DROP TABLE IF EXISTS commentaires;
 
--- CREATE TABLE commentaires (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     contenu TEXT NOT NULL,
---     date DATE NOT NULL,
---     id_article INT NOT NULL, 
+-- 2. Recrée la table avec toutes les relations nécessaires
+CREATE TABLE commentaires (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contenu TEXT NOT NULL,
+    date DATE NOT NULL,
+    article_id INT NOT NULL, 
+    utilisateur_id INT NOT NULL, 
     
---     CONSTRAINT FK_ArticleCommentaire FOREIGN KEY (id_article) REFERENCES articles(id) ON DELETE CASCADE
--- );
+    CONSTRAINT FK_ArticleCommentaire FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+    CONSTRAINT FK_UtilisateurCommentaire FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
+);
 
 -- CREATE TABLE signalement_articles (
 --     id INT AUTO_INCREMENT PRIMARY KEY,

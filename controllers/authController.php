@@ -26,6 +26,9 @@ $login = function(){
                         redirectTo("auth","auteurDashboard");
                     }else if($_SESSION["user"]["role"] == "admin"){
                         redirectTo("auth","adminDashboard");
+                    }else if($_SESSION["user"]["role"] == "lecteur"){
+                        redirectTo("articles","accueil");
+                          
                     }
     
                 }else{

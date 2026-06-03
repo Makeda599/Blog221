@@ -5,6 +5,7 @@ function routes(){
         "auth" => ROOT."controllers/authController.php",
         "articles" => ROOT."controllers/articleController.php",
         "categories" => ROOT."controllers/categorieController.php",
+        "commentaires" =>ROOT."controllers/commentaireController.php"
     ];
 }
 function gestionController(){

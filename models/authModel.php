@@ -34,4 +34,5 @@ function saveUser(array $data){
 
  function deconnexion(){
     session_destroy();
+    session_unset();
  }

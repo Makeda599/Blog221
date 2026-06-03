@@ -77,6 +77,12 @@
                                 
                                 <td class="py-4 px-6">
                                     <div class="flex items-center justify-center gap-2">
+                                        
+                                        <!-- BOUTON AJOUTÉ : Voir les détails / Lire l'article -->
+                                        <a href="?controller=articles&page=detailArticle&id=<?= $article['id'] ?>" class="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 transition rounded-lg" title="Voir les détails / Lire">
+                                            <i class="fa-regular fa-eye text-sm"></i>
+                                        </a>
+
                                         <a href="?controller=admin&action=supprimerArticle&id=<?= $article['id'] ?>" onclick="return confirm('Supprimer cet article ?')" class="p-2 bg-red-50 text-red-500 hover:bg-red-100 transition rounded-lg" title="Supprimer">
                                             <i class="fa-regular fa-trash-can text-sm"></i>
                                         </a>
@@ -85,13 +91,14 @@
                                             <a href="?controller=articles&page=restreindreArticle&id=<?= $article['id'] ?>" class="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 transition rounded-lg" title="Restreindre / Masquer">
                                                 <i class="fa-regular fa-eye-slash text-sm"></i>
                                             </a>
-                                        <?php elseif (trim($article['statut']) ==='en_attente'): ?>
-                                            <a href="?controller=articles&page=publierArticle&id=<?= $article['id'] ?>" class="p-2 bg-green-50 text-green-600 hover:bg-green-100 transition rounded-lg" title="Valider et Publier">
+                                        <?php elseif (trim($article['statut']) === 'en_attente'): ?>
+                                            <!-- Note : j'ai corrigé "publierArticle" qui pointait vers "publieArticle" dans ton switch précédent -->
+                                            <a href="?controller=articles&page=publieArticle&id=<?= $article['id'] ?>" class="p-2 bg-green-50 text-green-600 hover:bg-green-100 transition rounded-lg" title="Valider et Publier">
                                                 <i class="fa-regular fa-circle-check text-sm"></i>
                                             </a>
                                         <?php else: ?>
                                             <a href="?controller=articles&page=publieArticle&id=<?= $article['id'] ?>" class="p-2 bg-blue-50 text-blue-500 hover:bg-blue-100 transition rounded-lg" title="Réactiver / Publier">
-                                                <i class="fa-regular fa-eye text-sm"></i>
+                                                <i class="fa-regular fa-share-from-square text-sm"></i>
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -99,7 +106,6 @@
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <!-- Message si la table est vide -->
                         <tr>
                             <td colspan="5" class="py-8 text-center text-gray-400 font-medium bg-gray-50/20">
                                 Aucun article trouvé dans la base de données.

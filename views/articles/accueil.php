@@ -9,20 +9,44 @@
 <body class="bg-[#f4f4f4] font-sans text-gray-900">
 
     <!-- Header / Navbar -->
-    <header class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 border-b border-gray-100">
-        <div class="text-2xl font-bold flex items-center">
-            <span class="bg-black text-white px-2 py-1 rounded mr-2 text-xl">B</span> LOG221
-        </div>
-        <nav class="hidden md:flex space-x-8 font-medium">
-            <a href="#" class="text-[#ff00cc] border-b-2 border-[#ff00cc] pb-1">Accueil</a>
-            <a href="#" class="text-gray-600 hover:text-[#ff00cc] transition">À propos</a>
-            <a href="#" class="text-gray-600 hover:text-[#ff00cc] transition">Contact</a>
-        </nav>
-        <div class="flex space-x-4">
-            <button class="border border-[#ff00cc] text-[#ff00cc] px-5 py-2 rounded-xl text-sm font-semibold hover:bg-pink-50 transition"><a href="<?= path("auth","login") ?>">Se connecter</a></button>
-            <button class="bg-[#ff00cc] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition"><a href="<?= path("auth","inscription") ?>">S'inscrire</a></button>
-        </div>
-    </header>
+<!-- Header / Navbar -->
+<header class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 border-b border-gray-100">
+    <div class="text-2xl font-bold flex items-center">
+        <span class="bg-black text-white px-2 py-1 rounded mr-2 text-xl">B</span> LOG221
+    </div>
+    <nav class="hidden md:flex space-x-8 font-medium">
+        <a href="?controller=articles&page=accueil" class="text-[#ff00cc] border-b-2 border-[#ff00cc] pb-1">Accueil</a>
+        <a href="#" class="text-gray-600 hover:text-[#ff00cc] transition">À propos</a>
+        <a href="#" class="text-gray-600 hover:text-[#ff00cc] transition">Contact</a>
+    </nav>
+    
+    <div class="flex space-x-4 items-center">
+        <?php if (isset($_SESSION['user'])): ?>
+            <!-- L'utilisateur est connecté (Lecteur / Auteur) -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+                    <img src="<?= WEBROOT ?>/uploads/photos/<?= htmlspecialchars($_SESSION['user']['photo'] ?? 'default.jpg') ?>" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <div class="hidden sm:block text-left">
+                    <p class="text-xs font-bold text-gray-900"><?= htmlspecialchars($_SESSION['user']['prenom'] . ' ' . $_SESSION['user']['nom']) ?></p>
+                    <p class="text-[10px] text-gray-400 capitalize"><?= htmlspecialchars($_SESSION['user']['role'] ?? 'Lecteur') ?></p>
+                </div>
+                <!-- Bouton de Déconnexion -->
+                <a href="?controller=auth&page=logOut" class="ml-2 text-gray-400 hover:text-red-500 transition text-sm" title="Se déconnecter">
+                    <i class="fa-solid fa-power-off"></i> Déconnexion
+                </a>
+            </div>
+        <?php else: ?>
+            <!-- L'utilisateur n'est pas connecté -->
+            <button class="border border-[#ff00cc] text-[#ff00cc] px-5 py-2 rounded-xl text-sm font-semibold hover:bg-pink-50 transition">
+                <a href="<?= path("auth","login") ?>">Se connecter</a>
+            </button>
+            <button class="bg-[#ff00cc] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
+                <a href="<?= path("auth","inscription") ?>">S'inscrire</a>
+            </button>
+        <?php endif; ?>
+    </div>
+</header>
 
     <!-- Hero Section -->
     <section class="max-w-7xl mx-auto p-6 md:p-12">
@@ -56,103 +80,43 @@
     </section>
 
     <!-- Section: À la une -->
-    <section class="max-w-7xl mx-auto px-6 py-12">
-        <h2 class="text-3xl font-extrabold mb-2 flex items-center gap-2">
-            À la une sur <span class="inline-flex items-center bg-black text-white px-2 py-0.5 rounded text-xl font-bold">B</span>LOG221
-        </h2>
-        <p class="text-gray-500 mb-10 text-sm">Découvrez les derniers articles publiés par notre communauté d'auteurs talentueux.</p>
+<section class="max-w-7xl mx-auto px-6 py-12">
+    <h2 class="text-3xl font-extrabold mb-2 flex items-center gap-2">
+        À la une sur <span class="inline-flex items-center bg-black text-white px-2 py-0.5 rounded text-xl font-bold">B</span>LOG221
+    </h2>
+    <p class="text-gray-500 mb-10 text-sm">Découvrez les derniers articles publiés par notre communauté d'auteurs talentueux.</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Card 1 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col h-full relative">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400" class="h-44 w-full object-cover">
-                    <span class="absolute top-3 left-3 bg-white text-gray-700 text-[10px] uppercase font-bold px-2 py-1 rounded-md shadow-sm">Frontend</span>
-                </div>
-                <div class="p-5 flex flex-col flex-grow">
-                    <h3 class="font-extrabold text-sm text-gray-900 mb-2 line-clamp-2">L'architecture micro-frontend : mythe ou réalité pour les grandes...</h3>
-                    <!-- LA DESCRIPTION CORRIGÉE ICI -->
-                    <p class="text-xs text-gray-500 mb-4 line-clamp-3 leading-relaxed">Une analyse approfondie des avantages et des défis liés à l'adoption des micro-frontends dans les applications d'entreprise complexes.</p>
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-2 text-xs text-gray-600 mb-3 border-t pt-3">
-                            <img src="https://i.pravatar.cc/100?img=11" class="w-6 h-6 rounded-full object-cover">
-                            <span class="font-medium truncate">Mamadou Diop</span>
-                            <span class="text-gray-400 ml-auto text-[10px]">12 oct</span>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <?php if (!empty($articlesALaUne)): ?>
+            <?php foreach ($articlesALaUne as $art): ?>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col h-full relative">
+                    <div class="relative">
+                        <img src="<?= WEBROOT ?>/uploads/<?= htmlspecialchars($art['image'] ?? 'default.jpg') ?>" class="h-44 w-full object-cover">
+                        <span class="absolute top-3 left-3 bg-white text-gray-700 text-[10px] uppercase font-bold px-2 py-1 rounded-md shadow-sm">
+                            <?= htmlspecialchars($art['categorie_nom'] ?? 'Tech') ?>
+                        </span>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="font-extrabold text-sm text-gray-900 mb-2 line-clamp-2"><?= htmlspecialchars($art['titre']) ?></h3>
+                        <p class="text-xs text-gray-500 mb-4 line-clamp-3 leading-relaxed"><?= htmlspecialchars($art['description']) ?></p>
+                        <div class="mt-auto">
+                            <div class="flex items-center gap-2 text-xs text-gray-600 mb-3 border-t pt-3">
+                                <img src="<?= WEBROOT ?>/uploads/photos/<?= htmlspecialchars($art['photo'] ?? 'default.jpg') ?>" class="w-6 h-6 rounded-full object-cover">
+                                <span class="font-medium truncate"><?= htmlspecialchars($art['prenom'] . ' ' . $art['nom']) ?></span>
+                                <span class="text-gray-400 ml-auto text-[10px]"><?= date('d M', strtotime($art['date'])) ?></span>
+                            </div>
+                            <a href="?controller=articles&page=detailArticle&id=<?= $art['id'] ?>" class="w-full bg-[#ff00cc] text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-opacity-90 transition">
+                                Lire l'article <span class="text-xs">➔</span>
+                            </a>
                         </div>
-                        <button class="w-full bg-[#ff00cc] text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-opacity-90 transition">
-                            Lire l'article <span class="text-xs">➔</span>
-                        </button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col h-full relative">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400" class="h-44 w-full object-cover">
-                    <span class="absolute top-3 left-3 bg-white text-gray-700 text-[10px] uppercase font-bold px-2 py-1 rounded-md shadow-sm">Data Science</span>
-                </div>
-                <div class="p-5 flex flex-col flex-grow">
-                    <h3 class="font-extrabold text-sm text-gray-900 mb-2 line-clamp-2">Visualisation de données : au-delà des graphiques basiques</h3>
-                    <p class="text-xs text-gray-500 mb-4 line-clamp-3 leading-relaxed">Comment transformer des ensembles de données complexes en récits visuels captivants grâce aux meilleures pratiques graphiques.</p>
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-2 text-xs text-gray-600 mb-3 border-t pt-3">
-                            <img src="https://i.pravatar.cc/100?img=12" class="w-6 h-6 rounded-full object-cover">
-                            <span class="font-medium truncate">Amina Ndiaye</span>
-                            <span class="text-gray-400 ml-auto text-[10px]">15 oct</span>
-                        </div>
-                        <button class="w-full bg-[#ff00cc] text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-opacity-90 transition">
-                            Lire l'article <span class="text-xs">➔</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col h-full relative">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=400" class="h-44 w-full object-cover">
-                    <span class="absolute top-3 left-3 bg-white text-gray-700 text-[10px] uppercase font-bold px-2 py-1 rounded-md shadow-sm">Productivité</span>
-                </div>
-                <div class="p-5 flex flex-col flex-grow">
-                    <h3 class="font-extrabold text-sm text-gray-900 mb-2 line-clamp-2">Le mythe du multitasking et l'art du "Deep Work"</h3>
-                    <p class="text-xs text-gray-500 mb-4 line-clamp-3 leading-relaxed">Pourquoi faire plusieurs tâches à la fois détruit votre productivité et comment retrouver une concentration maximale.</p>
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-2 text-xs text-gray-600 mb-3 border-t pt-3">
-                            <img src="https://i.pravatar.cc/100?img=13" class="w-6 h-6 rounded-full object-cover">
-                            <span class="font-medium truncate">Omar Fall</span>
-                            <span class="text-gray-400 ml-auto text-[10px]">8 oct</span>
-                        </div>
-                        <button class="w-full bg-[#ff00cc] text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-opacity-90 transition">
-                            Lire l'article <span class="text-xs">➔</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col h-full relative">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=400" class="h-44 w-full object-cover">
-                    <span class="absolute top-3 left-3 bg-white text-gray-700 text-[10px] uppercase font-bold px-2 py-1 rounded-md shadow-sm">Conseils</span>
-                </div>
-                <div class="p-5 flex flex-col flex-grow">
-                    <h3 class="font-extrabold text-sm text-gray-900 mb-2 line-clamp-2">L'architecture micro-frontend : mythe ou réalité pour les grandes...</h3>
-                    <p class="text-xs text-gray-500 mb-4 line-clamp-3 leading-relaxed">Une exploration concrète des bénéfices de cette méthodologie dans les équipes de développement modernes.</p>
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-2 text-xs text-gray-600 mb-3 border-t pt-3">
-                            <img src="https://i.pravatar.cc/100?img=14" class="w-6 h-6 rounded-full object-cover">
-                            <span class="font-medium truncate">Alioune Badara</span>
-                            <span class="text-gray-400 ml-auto text-[10px]">10 oct</span>
-                        </div>
-                        <button class="w-full bg-[#ff00cc] text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-opacity-90 transition">
-                            Lire l'article <span class="text-xs">➔</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="text-gray-400 italic text-sm col-span-4 text-center">Aucun article disponible pour le moment.</p>
+        <?php endif; ?>
+    </div>
+</section>
 
     <!-- SECTION AJOUTÉE : Explorez par catégorie -->
     <section class="max-w-7xl mx-auto px-6 py-12 text-center relative">

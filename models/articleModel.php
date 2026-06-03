@@ -62,3 +62,28 @@ function restreindreArticle(int $id){
     $sql ="UPDATE articles SET statut = 'restreinte' WHERE id = :id";
    executeUpdate($sql,["id" => $id]);
 }
+
+
+function getArticlesALaUne(int $limite = 4) {
+    $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
+            FROM articles a
+            JOIN categories c ON a.id_categorie = c.id
+            JOIN utilisateurs u ON a.id_auteur = u.id
+            WHERE a.statut = 'publie' 
+            ORDER BY a.date DESC 
+            LIMIT " . (int)$limite;
+            
+    return executeSelect($sql); 
+}
+
+function getArticlesRecents(int $limite = 6, int $offset = 4) {
+    $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
+            FROM articles a
+            JOIN categories c ON a.id_categorie = c.id
+            JOIN utilisateurs u ON a.id_auteur = u.id
+            WHERE a.statut = 'publie' 
+            ORDER BY a.date DESC 
+            LIMIT " . (int)$limite . " OFFSET " . (int)$offset;
+            
+    return executeSelect($sql); 
+}

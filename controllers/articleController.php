@@ -1,9 +1,14 @@
 <?php
 require_once(ROOT."models/categorieModel.php");
 require_once(ROOT."models/articleModel.php");
+require_once(ROOT."models/commentairesModel.php");
 
 $accueil = function(){
+    $articles = getAllArticles();
+    $articlesALaUne = getArticlesALaUne(4); 
+    $articlesRecents = getArticlesRecents(6);
     require_once(ROOT."views/articles/accueil.php");
+    // loadView("articles/accueil", compact("articles"), "base");
 };
 $ajoutArticle = function () {
     $categories = allCategorie();
@@ -72,9 +77,15 @@ $detailArticle = function(){
     if(isset($_GET["id"])){
         $id = $_GET["id"];
         $article = getDetailArticle($id);
-
+        $commentaires = getCommentairesByArticle($id);
+        } else {
+        $id = 0;
+        $article = null;
+        $commentaires = [];
     }
-    loadView("articles/detailArticle",compact("article","id"),"base");
+
+    
+    loadView("articles/detailArticle",compact("article","id","commentaires"),"base");
 };
 $allArticle = function(){
     $articles = getAllArticles();

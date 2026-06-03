@@ -79,9 +79,9 @@
                             <?= htmlspecialchars($_SESSION['user']['prenom'] . ' ' . $_SESSION['user']['nom']) ?>
                         </span>
                         
-                        <!-- <a href="?controller=auth&page=logOut" class="text-gray-400 hover:text-red-500 text-xs pl-1" title="Déconnexion">
+                        <a href="?controller=auth&page=logOut" class="text-gray-400 hover:text-red-500 text-xs pl-1" title="Déconnexion">
                             <i class="fa-solid fa-power-off"></i>
-                        </a> -->
+                        </a>
                     </div>
                 <?php endif; ?>
 

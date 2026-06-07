@@ -6,7 +6,6 @@
                    <i class="fa-solid fa-file-circle-plus text-2xl text-gray-700"></i> Ajout article
                </h2>
 
-               <div class="xl:col-span-3 bg-white rounded-xl border border-gray-200 p-8 space-y-6 shadow-sm w-full">
 
                    <?php if (!empty($errors)): ?>
                        <div class="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 text-sm">
@@ -98,7 +97,7 @@
                            </button>
                        </div>
                    </form>
-               </div>
+               
            </div>
 
            <aside class="bg-white rounded-xl border border-gray-200 p-5 space-y-5 shadow-sm w-full">

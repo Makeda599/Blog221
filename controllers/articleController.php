@@ -15,6 +15,9 @@ $ajoutArticle = function () {
     $save = [];
     $errors = [];
     
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && isset($_SERVER['CONTENT_LENGTH'])) {
+        $errors['image'] = "Le fichier image ou le formulaire complet dépasse la taille maximale autorisée par le serveur.";
+    }
     if (isset($_REQUEST["envoyer"])) {
         $save = $_POST;
         $errors = validateArticle($save);
@@ -44,8 +47,6 @@ $ajoutArticle = function () {
                 $save["statut"] = "en_attente";
                 $save["id_auteur"] = $_SESSION["user"]["id"];
                 ajoutArticle ($save);
-                // Appel de votre modèle pour insérer l'article en BDD
-                // insertArticle($save); 
 
                 // header("Location: ?controller=articles&page=accueil");
                 // exit();

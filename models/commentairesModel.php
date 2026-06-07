@@ -26,8 +26,13 @@ function getCommentairesByArticle(int $articleId) {
     $sql = "SELECT c.*, u.nom, u.prenom, u.photo 
             FROM commentaires c
             INNER JOIN utilisateurs u ON c.utilisateur_id = u.id
-            WHERE c.article_id = ?
+            WHERE c.article_id = ? 
             ORDER BY c.id DESC"; 
             
     return executeSelect($sql, [$articleId], false);
+}
+
+function archiverCommentaire(int $id) {
+    $sql = "UPDATE commentaires SET statut ='' WHERE id = :id";
+    return executeUpdate($sql, ["id" => $id]);
 }

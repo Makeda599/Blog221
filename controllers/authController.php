@@ -49,6 +49,11 @@ $login = function(){
 $inscrip = function(){
      $save = [];
     $errors = [];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && isset($_SERVER['CONTENT_LENGTH'])) {
+        $errors['photo'] = "Le fichier image ou le formulaire complet dépasse la taille maximale autorisée par le serveur.";
+    }
+
     if(isset($_REQUEST["envoie"])){
         $save = $_POST;
         
@@ -79,6 +84,18 @@ $inscrip = function(){
                     "role"        =>$save["role"],
                 ];
                 saveUser($dataUser);
+                $userConnecte = getClientByMail($dataUser["email"]);
+                if($userConnecte){
+                    $_SESSION["user"] = $userConnecte;
+                    if($_SESSION["user"]["role"] == "lecteur"){
+                        redirectTo("articles","accueil");
+                    }else if($_SESSION["user"]["role"] == "auteur"){
+                        redirectTo("auth","auteurDashboard");
+
+                    }
+                }else{
+                    redirectTo("auth", "login");
+                }
                 // redirectTo("produits","listeProduit");
             }else{
                 $errors["photo"] = "Erreur lors de l'enregistrement de l'image";

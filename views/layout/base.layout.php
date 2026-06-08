@@ -22,9 +22,12 @@
                     </span>
                 </a>
             </div>
-
             <div class="hidden md:flex flex-1 justify-center items-center gap-8 text-sm font-semibold h-20">
-                <a href="#" class="text-gray-500 hover:text-gray-900 transition">Dashboard</a>
+                <?php if ($_SESSION['user']['role'] == "auteur"): ?>
+                <a href="?controller=articles&page=articleAuteur" class="text-gray-500 hover:text-gray-900 transition">Dashboard</a>
+                <?php elseif ($_SESSION['user']['role'] == "lecteur") : ?>
+                <a href="<?=path("articles","accueil") ?>" class="text-gray-500 hover:text-gray-900 transition">Accueil</a>
+            <?php endif; ?>
                 <a href="?controller=articles&page=articleAuteur" class="text-gray-900 border-b-2 border-pink-500 h-full flex items-center px-1">
                     Articles
                 </a>

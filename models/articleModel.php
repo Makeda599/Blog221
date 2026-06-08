@@ -30,7 +30,7 @@ function getAllArticleByAuteur(int $id){
             FROM articles a
             INNER JOIN utilisateurs u ON a.id_auteur = u.id
             INNER JOIN categories c ON a.id_categorie = c.id
-            WHERE a.id_auteur = ?" ;
+            WHERE a.id_auteur = ?  " ;
             
     return executeSelect($sql, [$id], false);
 }
@@ -48,8 +48,7 @@ function getAllArticles(){
     $sql = "SELECT a.*, u.nom, u.prenom, c.nom AS categorie_nom 
             FROM articles a
             INNER JOIN utilisateurs u ON a.id_auteur = u.id
-            INNER JOIN categories c ON a.id_categorie = c.id"
-            ;
+            INNER JOIN categories c ON a.id_categorie = c.id";
             
     return executeSelect($sql);
 }
@@ -86,4 +85,9 @@ function getArticlesRecents(int $limite = 6, int $offset = 4) {
             LIMIT " . (int)$limite . " OFFSET " . (int)$offset;
             
     return executeSelect($sql); 
+}
+
+function archiverArticle(int $id){
+    $sql = "UPDATE articles SET statut ='restreinte' WHERE id = :id";
+    return executeUpdate($sql, ["id" => $id]);
 }

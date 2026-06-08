@@ -37,7 +37,7 @@
             <a href="?controller=categories&page=allCategorie" class="flex items-center gap-4 px-4 py-3 <?= ($currentPage ?? '') === 'allCategorie' ? 'text-gray-900 font-bold bg-pink-300 shadow-sm' : 'text-gray-700 font-medium hover:bg-pink-300' ?> rounded-lg transition">
                 <i class="fa-solid fa-tags w-5 text-lg"></i> Catégories
             </a>
-            <a href="?controller=articles&page=allSignalements" class="flex items-center gap-4 px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-pink-300 transition">
+            <a href="?controller=signalArticles&page=allSignalArticle" class="flex items-center gap-4 px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-pink-300 transition">
                 <i class="fa-solid fa-triangle-exclamation w-5 text-lg"></i> Signalements
             </a>
         </nav>
@@ -67,8 +67,33 @@
                 <span class="absolute top-0 right-0 w-2 h-2 bg-pink-500 rounded-full"></span>
             </button>
             <div class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-gray-300">
-                <span class="text-sm font-semibold text-gray-800">Abdou Aziz Diouf</span>
+               <?php if (isset($_SESSION['user'])): ?>
+                    <div class="flex items-center gap-3 pl-4">
+
+                        
+                        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-100 flex items-center justify-center">
+                            <?php 
+                            $avatar = $_SESSION['user']['photo'] ?? '';
+                            // Test de sécurité sur le chemin physique de l'image
+                           if (!empty($avatar) && file_exists(ROOT . "public/uploads/photos/" . $avatar)):
+                            ?>
+                                <img src="<?= WEBROOT ?>/uploads/photos/<?= htmlspecialchars($avatar) ?>" 
+                                    alt="Profil" 
+                                    class="w-full h-full object-cover">
+                            <?php else: ?>
+                                <i class="fa-solid fa-user text-gray-400 text-lg"></i>
+                            <?php endif; ?>
+                        </div>
+                        <span class="text-sm font-bold text-gray-800 hidden sm:inline">
+                            <?= htmlspecialchars($_SESSION['user']['prenom'] . ' ' . $_SESSION['user']['nom']) ?>
+                        </span>
+                        
+                        <a href="?controller=auth&page=logOut" class="text-gray-400 hover:text-red-500 text-xs pl-1" title="Déconnexion">
+                            <i class="fa-solid fa-power-off"></i>
+                        </a>
+                    </div>
+                <?php endif; ?>
+
             </div>
         </div>
     </header>

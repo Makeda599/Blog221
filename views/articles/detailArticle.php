@@ -63,7 +63,7 @@
                     <button class="flex items-center gap-1.5 text-gray-400 hover:text-red-500 transition">
                         <i class="fa-regular fa-heart"></i>
                     </button>
-                    <a href="?controller=articles&page=signaler&id=<?= $article['id'] ?>" class="inline-flex items-center gap-1.5 text-red-500 font-semibold hover:underline">
+                    <a href="?controller=signalArticles&page=ajoutSignalArticle&id=<?= $article['id'] ?>" class="inline-flex items-center gap-1.5 text-red-500 font-semibold hover:underline">
                         <i class="fa-solid fa-flag text-xs"></i> signaler l'article
                     </a>
                 </div>

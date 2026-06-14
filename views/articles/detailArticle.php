@@ -175,7 +175,7 @@
                                 </div>
 
                                 <div class="shrink-0 self-start">
-                                    <a href="?controller=commentaires&page=signalerCommentaire&id=<?= $com['id'] ?>&article_id=<?= $article['id'] ?>" 
+                                    <a href="?controller=signalCommentaires&page=ajoutSignalCommentaires&id=<?= $com['id'] ?>&article_id=<?= $article['id'] ?>" 
                                        class="text-gray-400 hover:text-red-500 transition text-xs p-1" 
                                        title="Signaler ce commentaire">
                                         <i class="fa-solid fa-flag"></i>
@@ -194,7 +194,7 @@
         </section>
     <?php else: ?>
         <div class="max-w-none lg:w-[65.3%] mt-8 bg-amber-50 border border-amber-200 text-amber-800 p-5 rounded-2xl text-sm flex items-center gap-3 shadow-sm">
-            <span class="text-xl">⚠️</span>
+            <!-- <span class="text-xl">⚠️</span> -->
             <p class="font-medium">L'espace de discussion est fermé. Il sera disponible dès que l'article sera officiellement publié.</p>
         </div>
     <?php endif; ?>

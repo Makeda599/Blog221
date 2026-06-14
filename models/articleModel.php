@@ -62,7 +62,30 @@ function restreindreArticle(int $id){
    executeUpdate($sql,["id" => $id]);
 }
 
-
+function getArticlePublie(){
+    $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
+            FROM articles a
+            JOIN categories c ON a.id_categorie = c.id
+            JOIN utilisateurs u ON a.id_auteur = u.id
+            WHERE a.statut = 'publie' ";
+            return executeSelect($sql); 
+}
+function getArticleRestreinte(){
+    $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
+            FROM articles a
+            JOIN categories c ON a.id_categorie = c.id
+            JOIN utilisateurs u ON a.id_auteur = u.id
+            WHERE a.statut = 'restreinte' ";
+            return executeSelect($sql); 
+}
+function getArticleEnAttente(){
+    $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
+            FROM articles a
+            JOIN categories c ON a.id_categorie = c.id
+            JOIN utilisateurs u ON a.id_auteur = u.id
+            WHERE a.statut = 'en_attente' ";
+            return executeSelect($sql); 
+}
 function getArticlesALaUne(int $limite = 4) {
     $sql = "SELECT a.*, c.nom AS categorie_nom, u.prenom, u.nom, u.photo 
             FROM articles a

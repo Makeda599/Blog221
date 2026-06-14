@@ -28,10 +28,33 @@ $ajoutCommentaire = function(){
     
 loadView("articles/detailArticle", compact("article", "id", "commentaires", "errors"), "base");   
 };
-
-
+$allCommentaire = function(){
+    $commentaires =  getAllCommentaire();
+    loadView("commentaire/allComment",compact("commentaires"),"admin");
+};
+$archiverCommentaire = function(){
+    if(isset($_GET["id"])){
+        $id = $_GET["id"];
+        $commentaires =  getAllCommentaire();
+        archiverCommentaire($id);
+    }
+    loadView("commentaire/allComment",compact("commentaires"),"admin");
+    
+};
+$publierCommentaire = function(){
+    if(isset($_GET["id"])){
+        $id = $_GET["id"];
+        $commentaires =  getAllCommentaire();
+        publierCommentaire($id);
+    }
+    loadView("commentaire/allComment",compact("commentaires"),"admin");
+    
+};
 $pages = [
     "ajoutCommentaire" =>  $ajoutCommentaire ,
+    "allCommentaires" => $allCommentaire,
+    "archiverComment" => $archiverCommentaire,
+    "publierComment" => $publierCommentaire,
 ];
 $page = $_REQUEST["page"] ?? "ajoutCommentaire";
 

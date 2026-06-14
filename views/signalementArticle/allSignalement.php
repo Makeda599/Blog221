@@ -102,21 +102,22 @@
 
                                 <td class="py-4 px-6 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <button
-                                            title="Voir le détail du signalement"
-                                            class="js-voir-detail p-2 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
-                                            data-id="<?= $sig['id'] ?>"
-                                            data-motif="<?= htmlspecialchars($sig['motif'] ?? '') ?>"
-                                            data-description="<?= htmlspecialchars($sig['description'] ?? 'Aucune description complémentaire fournie.') ?>"
-                                            data-auteur="<?= htmlspecialchars(($sig['prenom_signaleur'] ?? '') . ' ' . ($sig['nom_signaleur'] ?? '')) ?>"
-                                            data-avatar="<?= WEBROOT ?>uploads/photos/<?= htmlspecialchars($sig['photo_signaleur'] ?? 'default.jpg') ?>"
-                                            data-contenu="<?= htmlspecialchars($sig['titre_cible'] ?? '') ?>"
-                                            data-article-id="<?= $sig['article_id'] ?? 'null' ?>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            </svg>
-                                        </button>
+                                     <button
+                                        title="Voir le détail du signalement"
+                                        class="js-voir-detail p-2 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                        data-id="<?= $sig['id'] ?>"
+                                        data-motif="<?= htmlspecialchars($sig['motif'] ?? '') ?>"
+                                        data-description="<?= htmlspecialchars($sig['description'] ?? 'Aucune description complémentaire fournie.') ?>"
+                                        data-auteur="<?= htmlspecialchars(($sig['prenom_signaleur'] ?? '') . ' ' . ($sig['nom_signaleur'] ?? '')) ?>"
+                                        data-avatar="<?= WEBROOT ?>uploads/photos/<?= htmlspecialchars($sig['photo_signaleur'] ?? 'default.jpg') ?>"
+                                        data-contenu="<?= htmlspecialchars($sig['titre_cible'] ?? '') ?>"
+                                        data-article-id="<?= $sig['article_id'] ?? 'null' ?>"
+                                        data-commentaire-id="<?= $sig['commentaire_id'] ?? 'null' ?>">
+                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                    </button>
                                     </div>
                                 </td>
 
@@ -212,7 +213,6 @@
         const btnModalReject = document.getElementById("modal-reject");
         const btnModalDelete = document.getElementById("modal-delete");
 
-        // Éléments internes de la modal
         const modalMotif = document.getElementById("modal-motif-text");
         const modalDescription = document.getElementById("modal-description-text");
         const modalAuteurName = document.getElementById("modal-auteur-name");
@@ -222,38 +222,42 @@
         const modalDeleteLink = document.getElementById("modal-delete-link");
         const modalRejectLink = document.getElementById("modal-reject-link");
 
-        function openModal(e) {
-            const btn = e.currentTarget;
+    function openModal(e) {
+        const btn = e.currentTarget;
 
-            modalMotif.textContent = btn.getAttribute("data-motif");
-            modalDescription.textContent = btn.getAttribute("data-description");
-            modalAuteurName.textContent = btn.getAttribute("data-auteur");
+        const row = btn.closest('tr');
+        const estArticle = row.innerHTML.includes('fa-file-lines') || row.innerText.toLowerCase().includes('article');
 
-            const avatarSrc = btn.getAttribute("data-avatar");
-            modalAuteurAvatar.src = avatarSrc;
-            modalContentAvatar.src = avatarSrc; 
+        modalMotif.textContent = btn.getAttribute("data-motif");
+        modalDescription.textContent = btn.getAttribute("data-description");
+        modalAuteurName.textContent = btn.getAttribute("data-auteur");
 
-            modalContentBody.textContent = btn.getAttribute("data-contenu");
+        const avatarSrc = btn.getAttribute("data-avatar");
+        modalAuteurAvatar.src = avatarSrc;
+        modalContentAvatar.src = avatarSrc; 
 
-            const signalementId = btn.getAttribute("data-id"); 
-            const articleId = btn.getAttribute("data-article-id");
+        modalContentBody.textContent = btn.getAttribute("data-contenu");
 
-            // Si c'est un article valide (pas un commentaire)
-            if (articleId && articleId !== "null") {
-                modalDeleteLink.href = `index.php?controller=signalArticles&page=archiverArticle&id=${articleId}&signalement_id=${signalementId}`;
-                modalDeleteLink.style.display = "inline-block";
-                
-                modalRejectLink.href = `index.php?controller=signalArticles&page=refuserSignalement&signalement_id=${signalementId}`;
-                modalRejectLink.style.display = "inline-block";
-            } else {
-                modalDeleteLink.href = "#";
-                modalDeleteLink.style.display = "none";
-                modalRejectLink.href = "#";
-                modalRejectLink.style.display = "none";
-            }
+        // Les IDs nécessaires
+        const signalementId = btn.getAttribute("data-id"); 
+        const articleId = btn.getAttribute("data-article-id");
+        const commentaireId = btn.getAttribute("data-commentaire-id");
 
-            modal.classList.remove("hidden");
+        if (estArticle) {
+            modalDeleteLink.href = `index.php?controller=signalArticles&page=archiverArticle&id=${articleId}&signalement_id=${signalementId}`;
+            modalRejectLink.href = `index.php?controller=signalArticles&page=refuserSignalement&signalement_id=${signalementId}`;
+            btnModalDelete.textContent = "Archiver l'article";
+        } else {
+            modalDeleteLink.href = `index.php?controller=signalCommentaires&page=archiverCommentaires&id=${commentaireId}&signalement_id=${signalementId}`;
+            modalRejectLink.href = `index.php?controller=signalCommentaires&page=refuserSignalement&id=${commentaireId}&signalement_id=${signalementId}`;
+            btnModalDelete.textContent = "Archiver le commentaire";
         }
+
+        modalDeleteLink.style.display = "inline-block";
+        modalRejectLink.style.display = "inline-block";
+
+        modal.classList.remove("hidden");
+    }
 
         function closeModal() {
             modal.classList.add("hidden");

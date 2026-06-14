@@ -83,9 +83,9 @@
                                             <i class="fa-regular fa-eye text-sm"></i>
                                         </a>
 
-                                        <a href="?controller=admin&action=supprimerArticle&id=<?= $article['id'] ?>" onclick="return confirm('Supprimer cet article ?')" class="p-2 bg-red-50 text-red-500 hover:bg-red-100 transition rounded-lg" title="Supprimer">
+                                        <!-- <a href="?controller=admin&action=supprimerArticle&id=<?= $article['id'] ?>" onclick="return confirm('Supprimer cet article ?')" class="p-2 bg-red-50 text-red-500 hover:bg-red-100 transition rounded-lg" title="Supprimer">
                                             <i class="fa-regular fa-trash-can text-sm"></i>
-                                        </a>
+                                        </a> -->
 
                                         <?php if (trim($article['statut']) === 'publie'): ?>
                                             <a href="?controller=articles&page=restreindreArticle&id=<?= $article['id'] ?>" class="p-2 bg-amber-50 text-amber-500 hover:bg-amber-100 transition rounded-lg" title="Restreindre / Masquer">

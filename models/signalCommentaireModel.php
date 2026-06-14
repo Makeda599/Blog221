@@ -5,17 +5,30 @@ function validateSignalArticle(array $data){
     ];
     return validate($data ,$rules);
 }
-function ajoutSignalArticle(array $data){
-    $sql="INSERT INTO signalement_articles (motif,date_signalement,statut,article_id,utilisateur_id,description) VALUES (:motif, :date_signalement,:statut, :article_id,:utilisateur_id,:description)";
+function getDetailCommentairePourSignalement(int $id) {
+  
+    $sql = "SELECT c.*, a.titre AS article_titre 
+            FROM commentaires c 
+            JOIN articles a ON c.article_id = a.id 
+            WHERE c.id = :id";
+    return executeSelect($sql, ['id' => $id], true);
+}
+function ajoutSignalCommentaire(array $data){
+    $sql = "INSERT INTO signalement_commentaires 
+            (motif, date_signalement, statut, commentaire_id, utilisateur_id, description) 
+            VALUES 
+            (:motif, :date_signalement, :statut, :commentaire_id, :utilisateur_id, :description)";
+            
     $dataSignal = [
-        "motif" => $data["motif"],
+        "motif"            => $data["motif"],
         "date_signalement" => $data["date_signalement"],
-        "statut" => $data["statut"],
-        "article_id" => $data["article_id"],
-        "utilisateur_id"   => $_SESSION['user']['id'],
-        "description" =>$data["description"]
+        "statut"           => $data["statut"],
+        "commentaire_id"   => (int)$data["commentaire_id"],
+        "utilisateur_id"   => (int)$_SESSION['user']['id'],
+        "description"      => $data["description"] ?? null
     ];
-    executeUpdate($sql,$dataSignal);
+    
+    executeUpdate($sql, $dataSignal);
 }
 function getAllSignalements() {
     $sql = "
@@ -62,12 +75,12 @@ function getAllSignalements() {
     return executeSelect($sql);
 }
 
-function traiteSignalementArticle(int $id){
-    $sql = "UPDATE signalement_articles set statut = 'traite' WHERE id = :id ";
+function traiteSignalementCommentaire(int $id){
+    $sql = "UPDATE signalement_commentaires set statut = 'traite' WHERE id = :id ";
     executeUpdate($sql ,["id" => $id]);
 }
 
-function RejeterSignalementArticle(int $id){
-    $sql = "UPDATE signalement_articles set statut = 'rejete' WHERE id = :id ";
+function RejeterSignalementCommentaire(int $id){
+    $sql = "UPDATE signalement_commentaires set statut = 'rejete' WHERE id = :id ";
     executeUpdate($sql ,["id" => $id]);
 }

@@ -9,7 +9,6 @@
 </head>
 <body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
 
-<!-- SIDEBAR -->
 <aside class="w-64 bg-pink-200 flex flex-col justify-between p-4 h-full shrink-0">
     <div>
         <div class="mb-8 pl-4 flex flex-col items-start">
@@ -34,6 +33,9 @@
             <a href="?controller=articles&page=allArticles" class="flex items-center gap-4 px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-pink-300 transition">
                 <i class="fa-solid fa-book-open w-5 text-lg"></i> Articles
             </a>
+            <a href="?controller=commentaires&page=allCommentaires" class="flex items-center gap-4 px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-pink-300 transition">
+                <i class="fa-solid fa-comment w-5 text-lg"></i> Commentaires
+            </a>
             <a href="?controller=categories&page=allCategorie" class="flex items-center gap-4 px-4 py-3 <?= ($currentPage ?? '') === 'allCategorie' ? 'text-gray-900 font-bold bg-pink-300 shadow-sm' : 'text-gray-700 font-medium hover:bg-pink-300' ?> rounded-lg transition">
                 <i class="fa-solid fa-tags w-5 text-lg"></i> Catégories
             </a>
@@ -50,10 +52,8 @@
     </div>
 </aside>
 
-<!-- CONTENU PRINCIPAL -->
 <div class="flex-1 flex flex-col h-full overflow-hidden">
 
-    <!-- TOPBAR -->
     <header class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between shadow-sm shrink-0">
         <div class="relative w-80">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -74,7 +74,6 @@
                         <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-100 flex items-center justify-center">
                             <?php 
                             $avatar = $_SESSION['user']['photo'] ?? '';
-                            // Test de sécurité sur le chemin physique de l'image
                            if (!empty($avatar) && file_exists(ROOT . "public/uploads/photos/" . $avatar)):
                             ?>
                                 <img src="<?= WEBROOT ?>/uploads/photos/<?= htmlspecialchars($avatar) ?>" 
@@ -98,7 +97,6 @@
         </div>
     </header>
 
-    <!-- CONTENU DE LA PAGE -->
     <main class="flex-1 p-8 overflow-y-auto bg-gray-50">
         <?= $content ?>
     </main>

@@ -40,7 +40,7 @@ $archiverArticle = function(){
         $id_article = $_GET["id"];
         $id_signalement = $_GET["signalement_id"];
             archiverArticle($id_article);
-        
+            
         traiteSignalementArticle((int)$id_signalement);
         redirectTo("signalArticles", "allSignalArticle");
     }
@@ -50,9 +50,10 @@ $archiverArticle = function(){
 };
 
 $refuserSignalement = function(){
-    if(isset($_GET["signalement_id"])){
+    if(isset($_GET["signalement_id"]) && isset($_GET["id"])){
         $id_signalement = $_GET["signalement_id"];
-        
+        $id_article = $_GET["id"];
+        publierArticle($id_article);
         RejeterSignalementArticle((int)$id_signalement);
         redirectTo("signalArticles", "allSignalArticle");
     }

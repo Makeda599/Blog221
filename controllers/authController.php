@@ -6,7 +6,9 @@ require_once(ROOT."models/authModel.php");
 $login = function(){
     $save = [];
     $errors = [];
-
+    if (isset($_GET['redirect_article_id'])) {
+        $_SESSION['id_article'] = (int)$_GET['redirect_article_id'];
+    }
 
     if(isset($_REQUEST["envoie"])){
         $save = $_REQUEST;
@@ -27,6 +29,11 @@ $login = function(){
                     }else if($_SESSION["user"]["role"] == "admin"){
                         redirectTo("auth","adminDashboard");
                     }else if($_SESSION["user"]["role"] == "lecteur"){
+                        if(isset($_SESSION['id_article'])){
+                            $id_article = $_SESSION['id_article'];
+                            unset($_SESSION['id_article']); 
+                            redirectTo("articles","detailArticle&id=".$id_article);
+                        }
                         redirectTo("articles","accueil");
                           
                     }
@@ -120,12 +127,76 @@ $adminDashboard =function(){
 $auteurDashboard =function(){
     loadView("dashboard/auteurDashboard",[],"auteur");
 };
+$allUsers=function(){
+    $utilisateurs = getAllUsers();
+    loadView("auth/allUsers",compact("utilisateurs"),"admin");
+};
+$modifUser = function (){
+    if(isset($_GET['id'])){
+        $errors = [];
+        $save = [];
+        $id = (int)$_GET["id"];
+        $user = getUserById($id);
+
+        if (!$user) {
+            redirectTo("auth", "allUtilisateurs");
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && isset($_SERVER['CONTENT_LENGTH'])) {
+            $errors['photo'] = "Le fichier image ou le formulaire complet dépasse la taille maximale autorisée par le serveur.";
+        }
+        
+        if(isset($_POST["modifier_employe"])){
+            $save = $_POST;
+            $save["id"] = $id; 
+            $errors = validateUserModification($save);
+            
+            if(isset($_FILES["photo"]) && $_FILES["photo"]["error"] == 0){
+                $typesPhoto = ["image/jpeg" , "image/png", "image/jpg"];
+                
+                if(!in_array($_FILES["photo"]["type"], $typesPhoto)){
+                    $errors["photo"] = "Veuillez donner une image de type png ou jpeg";
+                }
+                if($_FILES["photo"]["size"] > 2097152){
+                    $errors["photo"] = "L'image ne doit pas dépasser 2 Mo";
+                }
+
+                if(!isset($errors["photo"])){
+                    $ext = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+                    $nomPhoto = uniqid().".". $ext ;
+                    $destination = ROOT."public/uploads/photos/".$nomPhoto;
+                    
+                    if(move_uploaded_file($_FILES["photo"]["tmp_name"], $destination)){
+                        $save["photo"] = $nomPhoto; 
+                    } else {
+                        $errors["photo"] = "Erreur lors de l'enregistrement de l'image";
+                    }
+                }
+            } else {
+                $save["photo"] = $user["photo"];
+            }
+
+            if(empty($errors)){
+                updateUser($save);
+                redirectTo("auth", "allUtilisateurs");
+                exit();
+            }
+        } else {
+            $save = $user;
+        }
+        // dd($save["photo"]);
+        loadView("auth/modifUser", compact("save", "errors"), "admin");
+    }
+};
 $pages = [
     "login" => $login,
     "inscription" => $inscrip,
     "logOut" => $deconnexion,
     "adminDashboard" => $adminDashboard,
     "auteurDashboard" => $auteurDashboard,
+    "allUtilisateurs" => $allUsers,
+    "modifUtilisateur" => $modifUser,
 
 ];
 $page = $_REQUEST["page"] ?? "inscription";

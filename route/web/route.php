@@ -7,6 +7,8 @@ function routes(){
         "categories" => ROOT."controllers/categorieController.php",
         "commentaires" =>ROOT."controllers/commentaireController.php",
         "signalArticles" => ROOT."controllers/signalementArtController.php",
+        "signalCommentaires" => ROOT."controllers/signalCommentController.php",
+
     ];
 }
 function gestionController(){

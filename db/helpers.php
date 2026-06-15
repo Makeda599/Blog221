@@ -6,7 +6,7 @@ function dd($test): void {
     echo "</pre>";
     die();
 }
-function loadView(string $view,array $datas = [],string $layout = "base"){
+function loadView(string $view,array $datas = [],string $layout = "admin"){
     ob_start();
     extract($datas);
     require_once(ROOT."views/".$view.".php");

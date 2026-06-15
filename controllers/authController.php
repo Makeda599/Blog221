@@ -1,64 +1,80 @@
 <?php
-require_once(ROOT."models/authModel.php");
+require_once(ROOT . "models/authModel.php");
 // var_dump($_REQUEST);
 // var_dump($_FILES);
 // die();
-$login = function(){
+$login = function () {
     $save = [];
     $errors = [];
+    if (isset($_GET['redirect_article_id'])) {
+        $_SESSION['id_article'] = (int)$_GET['redirect_article_id'];
+    }
 
-
-    if(isset($_REQUEST["envoie"])){
+    if (isset($_REQUEST["envoie"])) {
         $save = $_REQUEST;
         // var_dump($save);
         $errors = validateUserConnexion($save);
-        if(empty($errors)){
+        if (empty($errors)) {
             $email = $save["email"];
             $user = getClientByMail($email);
-            if(!$user){
+            if (!$user) {
                 $errors["email"] = "Aucun utilisateur n'a cet email";
-            }else{
-                if($save["mot_de_passe"]==$user["mot_de_passe"]){
+            } else {
+                if ($save["mot_de_passe"] == $user["mot_de_passe"]) {
                     $_SESSION["user"] = $user;
                     // var_dump($_SESSION["user"]);
                     // echo "connexion réussi";
-    
-                }else{
+                    if (isset($_SESSION['id_article'])) {
+                        $id_article = $_SESSION['id_article'];
+                        unset($_SESSION['id_article']);
+                        redirectTo("articles", "detailArticle&id=" . $id_article);
+                    }
+                    if ($_SESSION["user"]["role"] == "auteur") {
+                        redirectTo("auth", "auteurDashboard");
+                    } else if ($_SESSION["user"]["role"] == "admin") {
+                        redirectTo("auth", "adminDashboard");
+                    } else if ($_SESSION["user"]["role"] == "lecteur") {
+                        redirectTo("articles", "accueil");
+                    }
+                } else {
                     $errors["mot_de_passe"] = "mot de passe ne corresponde pas";
                 }
             }
-
         }
-            
-        }
-        // require_once(ROOT."views/auth/login.php");
-    loadView("auth/login",[
+    }
+    // require_once(ROOT."views/auth/login.php");
+    loadView("auth/login", [
         "save" => $save,
-        "errors" =>$errors
-    ],"auth");
+        "errors" => $errors
+    ], "auth");
 };
 
-$inscrip = function(){
-     $save = [];
+$inscrip = function () {
+    $save = [];
     $errors = [];
-    if(isset($_REQUEST["envoie"])){
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && isset($_SERVER['CONTENT_LENGTH'])) {
+        $errors['photo'] = "Le fichier image ou le formulaire complet dépasse la taille maximale autorisée par le serveur.";
+    }
+
+    if (isset($_REQUEST["envoie"])) {
         $save = $_POST;
-        
+
         $errors = validateUserInscription($save);
-        if($_FILES["photo"]["error"] == 0){
-            $typesPhoto = ["image/jpeg" , "image/png","image/jpg"];
-            if(!in_array($_FILES["photo"]["type"],$typesPhoto)){
+        if ($_FILES["photo"]["error"] == 0) {
+            $typesPhoto = ["image/jpeg", "image/png", "image/jpg"];
+            if (!in_array($_FILES["photo"]["type"], $typesPhoto)) {
                 $errors["photo"] = "Veuillez donnez une image de type png ou jpeg";
             }
-            if($_FILES["photo"]["size"] > 2097152){
+            if ($_FILES["photo"]["size"] > 2097152) {
                 $errors["photo"] = "L'image ne doit pas dépasser 2 Mo";
             }
         }
-        if(empty($errors)){
-            $ext = pathinfo($_FILES["photo"]["name"],PATHINFO_EXTENSION);
-            $nomPhoto = uniqid().".". $ext ;
-            $destination = ROOT."public/uploads/photos/".$nomPhoto;
-            if(move_uploaded_file($_FILES["photo"]["tmp_name"],$destination)){
+        if (empty($errors)) {
+            $ext = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+            $nomPhoto = uniqid() . "." . $ext;
+            $destination = ROOT . "public/uploads/photos/" . $nomPhoto;
+            if (move_uploaded_file($_FILES["photo"]["tmp_name"], $destination)) {
                 $save["photo"] = $nomPhoto;
                 // var_dump($save);
                 $dataUser = [
@@ -68,37 +84,131 @@ $inscrip = function(){
                     "email"        => $save["email"],
                     "mot_de_passe" => $save["mot_de_passe"],
                     "photo"        => $save["photo"],
-                    "role"        =>$save["role"],
+                    "role"        => $save["role"],
                 ];
                 saveUser($dataUser);
+                $userConnecte = getClientByMail($dataUser["email"]);
+                if ($userConnecte) {
+                    $_SESSION["user"] = $userConnecte;
+
+                    if (isset($_SESSION['id_article'])) {
+                        $id_article = $_SESSION['id_article'];
+                        unset($_SESSION['id_article']);
+                        redirectTo("articles", "detailArticle&id=" . $id_article);
+                        exit();
+                    }
+
+                    if ($_SESSION["user"]["role"] == "auteur") {
+                        redirectTo("auth", "auteurDashboard");
+                    } else if ($_SESSION["user"]["role"] == "admin") {
+                        redirectTo("auth", "adminDashboard");
+                    } else if ($_SESSION["user"]["role"] == "lecteur") {
+                        redirectTo("articles", "accueil");
+                    }
+                } else {
+                    redirectTo("auth", "login");
+                }
                 // redirectTo("produits","listeProduit");
-            }else{
+            } else {
                 $errors["photo"] = "Erreur lors de l'enregistrement de l'image";
             }
         }
-
-    
     }
-loadView("auth/inscription",[
-    "save" =>$save,
-    "errors" => $errors
-],"auth");
+
+    loadView("auth/inscription", [
+        "save" => $save,
+        "errors" => $errors
+    ], "auth");
 };
 
-$deconnexion =function(){
+
+$deconnexion = function () {
     deconnexion();
-    redirectTo("auth","login");
+    redirectTo("auth", "login");
+};
+$adminDashboard = function () {
+    loadView("dashboard/adminDashboard", [], "admin");
+};
+$auteurDashboard = function () {
+    loadView("dashboard/auteurDashboard", [], "auteur");
+};
+$allUsers = function () {
+    $utilisateurs = getAllUsers();
+    loadView("auth/allUsers", compact("utilisateurs"), "admin");
+};
+$modifUser = function () {
+    if (isset($_GET['id'])) {
+        $errors = [];
+        $save = [];
+        $id = (int)$_GET["id"];
+        $user = getUserById($id);
+
+        if (!$user) {
+            redirectTo("auth", "allUtilisateurs");
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && isset($_SERVER['CONTENT_LENGTH'])) {
+            $errors['photo'] = "Le fichier image ou le formulaire complet dépasse la taille maximale autorisée par le serveur.";
+        }
+
+        if (isset($_POST["modifier_employe"])) {
+            $save = $_POST;
+            $save["id"] = $id;
+            $errors = validateUserModification($save);
+
+            if (isset($_FILES["photo"]) && $_FILES["photo"]["error"] == 0) {
+                $typesPhoto = ["image/jpeg", "image/png", "image/jpg"];
+
+                if (!in_array($_FILES["photo"]["type"], $typesPhoto)) {
+                    $errors["photo"] = "Veuillez donner une image de type png ou jpeg";
+                }
+                if ($_FILES["photo"]["size"] > 2097152) {
+                    $errors["photo"] = "L'image ne doit pas dépasser 2 Mo";
+                }
+
+                if (!isset($errors["photo"])) {
+                    $ext = pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+                    $nomPhoto = uniqid() . "." . $ext;
+                    $destination = ROOT . "public/uploads/photos/" . $nomPhoto;
+
+                    if (move_uploaded_file($_FILES["photo"]["tmp_name"], $destination)) {
+                        $save["photo"] = $nomPhoto;
+                    } else {
+                        $errors["photo"] = "Erreur lors de l'enregistrement de l'image";
+                    }
+                }
+            } else {
+                $save["photo"] = $user["photo"];
+            }
+
+            if (empty($errors)) {
+                updateUser($save);
+                redirectTo("auth", "allUtilisateurs");
+                exit();
+            }
+        } else {
+            $save = $user;
+        }
+        // dd($save["photo"]);
+        loadView("auth/modifUser", compact("save", "errors"), "admin");
+    }
 };
 $pages = [
     "login" => $login,
     "inscription" => $inscrip,
     "logOut" => $deconnexion,
+    "adminDashboard" => $adminDashboard,
+    "auteurDashboard" => $auteurDashboard,
+    "allUtilisateurs" => $allUsers,
+    "modifUtilisateur" => $modifUser,
+
 ];
 $page = $_REQUEST["page"] ?? "inscription";
 
- if(array_key_exists($page,$pages)){
-        $pages[$page]();
-    }else {
-        echo "page introuvable";
-        exit();
-    }
+if (array_key_exists($page, $pages)) {
+    $pages[$page]();
+} else {
+    echo "page introuvable";
+    exit();
+}

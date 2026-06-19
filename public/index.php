@@ -2,7 +2,9 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+// define("ROOT", (str_replace("public","",$_SERVER['DOCUMENT_ROOT'])));
 define("ROOT", (str_replace("public","",$_SERVER['DOCUMENT_ROOT'])));
+
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
 define("WEBROOT", $protocol . $_SERVER['HTTP_HOST'] . "/");
